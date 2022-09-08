@@ -1,5 +1,3 @@
-*** Settings ***
-Library    RequestsLibrary
 *** Keywords ***
 Generate Token
     [Arguments]    ${username}    ${password}
@@ -17,5 +15,7 @@ Login
     &{body}    Create Dictionary    userName=${username}    password=${password}
     ${responseUserId}    POST On Session    userProfile    /account/v1/Login    json=${body}    expected_status=anything
     ${userId}    Get Elements    ${responseUserId.json()}    $.userId
-    # Set Test Variable    ${userId}    ${userId}
+    ${token}    Get Elements    ${responseUserId.json()}    $.token
+    &{headerToken}    Create Dictionary    Authorization=Bearer ${token}[0]
+    Update Session    userProfile    headers=${headerToken}
     RETURN    ${userId}
