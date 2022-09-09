@@ -1,14 +1,19 @@
 *** Keywords ***
-Add Book
-    [Arguments]    ${userId}    ${isbn}
+Add books
+    [Arguments]    ${userId}    @{isbns}
+    @{isbns list}    Create List    
+    FOR    ${isbn}    IN    @{isbns}
+        ${isbn json}    Set Variable    { "isbn": "${isbn}" }
+        Append To List    ${isbns list}    ${isbn json}
+    END
+    ${isbns json}    Catenate    SEPARATOR=,    @{isbns list}
     ${dataPostBook}    Catenate
     ...    {
     ...    "userId": "${userId}[0]",
-    ...    "collectionOfIsbns": [{"isbn": "${isbn}" }]
+    ...    "collectionOfIsbns": [${isbns json}]
     ...    }
-    ${body}    Evaluate    json.loads('''${dataPostBook}''')    json
-
-    ${resonseBookPost}    POST On Session    userProfile    /BookStore/v1/Books    json=${body}    expected_status=201
+    ${dataJson}    Evaluate    json.loads('''${dataPostBook}''')    json
+    ${resonseBookPost}    POST On Session    userProfile    /BookStore/v1/Books    json=${dataJson}    expected_status=anything
 
 Delete Books
     [Arguments]    ${userId}
