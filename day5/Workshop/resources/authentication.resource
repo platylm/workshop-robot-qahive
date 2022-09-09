@@ -7,7 +7,7 @@ Generate Token
     ${token}    Get Elements    ${response.json()}    $.token
     &{headerToken}    Create Dictionary    Authorization=Bearer ${token}[0]
     Update Session    userProfile    headers=${headerToken}
-    RETURN    ${token}
+    RETURN    ${headerToken}
     # Return From Keyword    ${token}
 
 Login 
@@ -16,6 +16,6 @@ Login
     ${responseUserId}    POST On Session    userProfile    /account/v1/Login    json=${body}    expected_status=anything
     ${userId}    Get Elements    ${responseUserId.json()}    $.userId
     ${token}    Get Elements    ${responseUserId.json()}    $.token
-    &{headerToken}    Create Dictionary    Authorization=Bearer ${token}[0]
-    Update Session    userProfile    headers=${headerToken}
+    # &{headerToken}    Create Dictionary    Authorization=Bearer ${token}[0]
+    # Update Session    userProfile    headers=${headerToken}
     RETURN    ${userId}
